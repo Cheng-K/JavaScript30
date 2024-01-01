@@ -1,23 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Type Ahead 👀</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="https://fav.farm/🔥" />
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Type Ahead 👀</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="https://fav.farm/🔥" />
+  </head>
+  <body>
+    <form class="search-form">
+      <input type="text" class="search" placeholder="City or State" />
+      <ul class="suggestions">
+        <li>Filter for a city</li>
+        <li>or a state</li>
+      </ul>
+    </form>
+    <script>
+      const endpoint =
+        "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json";
+      const cities = [];
+      fetch(endpoint)
+        .then((res) => res.json())
+        .then((data) => {
+          cities.push(...data);
+        });
+      function filterCities(wordToMatch) {
+        return cities.filter((city) => {
+          const regex = new RegExp(wordToMatch, "gi");
+          return city.city.match(regex) || city.state.match(regex);
+        });
+      }
+      function displayResult(results, keywords) {
+        const suggestions = document.querySelector(".suggestions");
+        while (suggestions.firstChild) {
+          suggestions.removeChild(suggestions.lastChild);
+        }
+        results.forEach((city) => {
+          const cityName = highlightWords(city.city, keywords);
+          const stateName = highlightWords(city.state, keywords);
+          const node = document.createElement("li");
+          node.innerHTML = `<p>${cityName}, ${stateName}</p> <p>${Number(
+            city.population
+          ).toLocaleString()}</p>`;
+          suggestions.appendChild(
+            document.createElement("li").appendChild(node)
+          );
+        });
+        if (results.length === 0) {
+          suggestions.innerHTML = "<li>No results found</li>";
+        }
+      }
 
-  <form class="search-form">
-    <input type="text" class="search" placeholder="City or State">
-    <ul class="suggestions">
-      <li>Filter for a city</li>
-      <li>or a state</li>
-    </ul>
-  </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
-
-</script>
-</body>
+      function highlightWords(resultText, keywords) {
+        return resultText.replace(
+          new RegExp(keywords, "gi"),
+          `<span class="hl">${keywords}</span>`
+        );
+      }
+      document
+        .querySelector(".search-form")
+        .addEventListener("submit", (event) => {
+          event.preventDefault();
+        });
+      document
+        .querySelector(".search-form .search")
+        .addEventListener("input", (event) => {
+          const foundCity = filterCities(event.target.value);
+          displayResult(foundCity, event.target.value);
+        });
+    </script>
+  </body>
 </html>
