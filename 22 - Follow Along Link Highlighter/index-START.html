@@ -27,8 +27,22 @@
     </div>
 
   <script>
-    // 👀👀👀👀👀👀👀👀👀👀👀👀👀👀👀
-  </script>
+    const triggers = document.querySelectorAll("a");
+    const highlight = document.createElement("span");
+    const wrapper = document.querySelector(".wrapper");
+    document.querySelector("body").append(highlight); 
+    highlight.classList.add("highlight");
+    triggers.forEach(trigger => {
+      trigger.addEventListener("mouseover", e => {
+        const domRect = e.target.getBoundingClientRect();
+        highlight.style = `width: ${domRect.width}px; height: ${domRect.height}px;`;
+        let offsetX = domRect.left + window.scrollX;
+        let offsetY = domRect.top + window.scrollY;
+        highlight.style.transform = `translate(${offsetX}px, ${offsetY}px)`
+      });
+
+    })
+</script>
 </body>
 </html>
 
