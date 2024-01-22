@@ -221,6 +221,36 @@
 </style>
 
 <script>
+  const triggers = document.querySelectorAll(".cool > li");
+  const background = document.querySelector(".dropdownBackground");
+  const nav = document.querySelector(".top");
+
+  function handleEnter(event) {
+    event.target.classList.add('trigger-enter');
+    setTimeout(() => {
+      if (event.target.classList.contains("trigger-enter"))
+        event.target.classList.add('trigger-enter-active');
+    }, 150);
+    background.classList.add('open');
+
+    const dropdown = this.querySelector(".dropdown");
+    const dropdownCoords = dropdown.getBoundingClientRect();
+    const navCoords = document.querySelector("nav").getBoundingClientRect();
+    background.style.transform = `translate(${dropdownCoords.left - navCoords.left}px, ${dropdownCoords.top - navCoords.top}px)`;
+    background.style.width = dropdownCoords.width + 'px';
+    background.style.height = dropdownCoords.height + 'px';
+     
+  }
+
+  function handleLeave(event) {
+    event.target.classList.remove("trigger-enter", 'trigger-enter-active');
+    background.classList.remove('open');
+
+  }
+
+  triggers.forEach(trigger => {trigger.addEventListener("mouseenter", handleEnter); trigger.addEventListener("mouseleave", handleLeave)});
+
+
 </script>
 
 </body>
